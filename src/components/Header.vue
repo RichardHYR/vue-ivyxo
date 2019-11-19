@@ -1,6 +1,6 @@
 <template>
    <div class="">
-       666666666
+       我是头组件
    </div>
 </template>
 

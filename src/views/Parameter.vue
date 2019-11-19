@@ -88,8 +88,7 @@ export default {
 </script>
 
 <style scoped src=''>
-.title {
-}
+
 .item_input_box {
   margin-top: 20px;
   width: 500px;

@@ -7,8 +7,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Parameter',
-      component: () => import('@/views/Parameter'),
+      name: 'Index',
+      component: () => import('@/views/Index'),
       meta: {
         keepAlive: false, // 需要被缓存
         // helpType: 1
