@@ -4,7 +4,7 @@ import axios from 'axios'
 axios.defaults.headers.post["Conten-type"] = "multipart/form-data"
 
 export default {
-  install(Vue, options) {
+  install(Vue) {
     // 页码
     Vue.prototype.$pageSize = 15
     //请求地址
@@ -19,7 +19,6 @@ export default {
       }
       if (params instanceof Object && !Array.isArray(params)) {
         if (!params.hasOwnProperty('code')) {
-          let authData = loadLoginAuth();
           //全局拼接的参数
           var globalParam = {}
           params = Object.assign(params, globalParam)

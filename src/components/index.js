@@ -1,7 +1,7 @@
 import header from './Header'
 
 export default {
-  install(Vue, options) {
+  install(Vue) {
     Vue.component(header.name, header)
   }
 }
