@@ -1,47 +1,71 @@
-import qs from 'qs'
 import axios from 'axios'
-// axios.defaults.headers.post["Conten-type"] = "application/json"
-axios.defaults.headers.post["Conten-type"] = "multipart/form-data"
 
-export default {
-  install(Vue) {
-    // 页码
-    Vue.prototype.$pageSize = 15
-    //请求地址
-    Vue.prototype.$PostUrl = require('./../urls/url')
-    // 获取数据API
-    // this.$PostAPI(this.$PostUrl.xxxUrl,params).then(res => {
-    // });
-    Vue.prototype.$PostAPI = (url, params) => {
-      //如果没有请求参数,创建空参
-      if (!params) {
-        params = {}
+let base = '';
+export const postRequest = (url, params) => {
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params,
+    transformRequest: [function (data) {
+      // Do whatever you want to transform the data
+      let ret = ''
+      for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
       }
-      if (params instanceof Object && !Array.isArray(params)) {
-        if (!params.hasOwnProperty('code')) {
-          //全局拼接的参数
-          var globalParam = {}
-          params = Object.assign(params, globalParam)
-        }
+      return ret
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+}
+export const uploadFileRequest = (url, params) => {
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}
+export const putRequest = (url, params) => {
+  return axios({
+    method: 'put',
+    url: `${base}${url}`,
+    data: params,
+    transformRequest: [function (data) {
+      let ret = ''
+      for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
       }
-      return axios.post(url, qs.stringify(params))
-        .then(Res => Res.data)
+      return ret
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
-    //上传图片API
-    // let formData = new FormData();
-    // formData.append("img", file.file);
-    // this.$upImg(this.$PostUrl.xxxUrl, formData).then(res => {
-    // });
-    Vue.prototype.$upImg = (url, params) => {
-      // let authData = loadLoginAuth();
-      // params.append("uid", authData.id);
-      // params.append("session", authData.u_session);
-      return axios.post(url, params, {
-          headers: {
-            'Content-Type': "multipart/form-data"
-          }
-      }).then(Res => Res.data)
-    }
-
-  }
+  });
+}
+export const deleteRequest = (url) => {
+  return axios({
+    method: 'delete',
+    url: `${base}${url}`
+  });
+}
+export const getRequest = (url,params) => {
+  return axios({
+    method: 'get',
+    data:params,
+    transformRequest: [function (data) {
+      let ret = ''
+      for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+      }
+      return ret
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    url: `${base}${url}`
+  });
 }
