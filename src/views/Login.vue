@@ -24,6 +24,7 @@
   </div>
 </template>
 <script>
+import { login } from '@/utils/api_url_utils.js';// 导入我们的api接口
 export default {
   name: "Login",
   data() {
@@ -36,6 +37,13 @@ export default {
     login(){
       console.log("登录:" + this.account
                   + "..." + this.psw);
+      // 调用api接口，并且提供了两个参数
+      let _this = this;                
+      login(_this.account,_this.psw).then(res => {
+          // 获取数据成功后的其他操作
+          console.log("获取接口数据" + JSON.stringify(res));                     
+      });
+      console.log("环境数据:" + JSON.stringify(process.env));          
     }
   },
   components: {

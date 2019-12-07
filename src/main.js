@@ -7,11 +7,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 // import fastClick from "fastClick";
 //图片懒加载
 import VueLazyLoad from 'vue-lazyload'
-import api from './utils/api'
 import component from './components'
 
 Vue.use(VueLazyLoad)
-Vue.use(api)
 Vue.use(component)
 Vue.use(ElementUI)
 // 设置为 false 以阻止 vue 在启动时生成生产提示。
