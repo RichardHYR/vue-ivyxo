@@ -1,6 +1,7 @@
 <template>
   <div class="box">
     <div class="top"></div>
+    <i class="el-icon-back" @click="back"></i>
     <div class="register_border">
       <div class="top"></div>
       <div class="register_title">注册</div>
@@ -45,6 +46,11 @@ export default {
     };
   },
   methods: {
+
+    back(){
+      this.$router.go(-1);
+    },
+
     register(){
       console.log("注册:" + this.account
                   + "..." + this.name
@@ -96,5 +102,9 @@ export default {
   height: 50px;
   float: right;
   margin-top: 5px;
+}
+.el-icon-back{
+  margin-left: 50px;
+  font-size: 50px;
 }
 </style>

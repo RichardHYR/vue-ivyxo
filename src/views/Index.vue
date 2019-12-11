@@ -7,16 +7,23 @@
         <div class="title">
           IVYXO
         </div>
+
         <div class="reg">
-          <el-button type="primary" round>注册</el-button>
-          <el-button type="success" round>登录</el-button>
+          <el-button type="primary" round @click="registerBtn">注册</el-button>
+          <el-button type="success" round @click="loginBtn">登录</el-button>
         </div>
+
+        <div class="loginInfo">
+          name
+          account
+        </div>
+
       </el-header>
 
       <el-main>
         <div class="main">
-          <el-button type="info" plain>站点信息</el-button>
-          <el-button type="info" plain>康奈尔笔记</el-button>
+          <el-button type="info" plain @click="webInfoBtn">站点信息</el-button>
+          <el-button type="info" plain @click="noteBtn">康奈尔笔记</el-button>
         </div>
       </el-main>
 
@@ -33,7 +40,24 @@ export default {
     };
   },
   methods: {
-    
+
+    registerBtn(){
+      console.log("注册");
+      this.$router.push({path:'/register',query:{}});
+    },
+
+    loginBtn(){
+      console.log("登录");
+      this.$router.push({path:'/login',query:{}});
+    },
+
+    webInfoBtn(){
+      console.log("站点信息");
+    },
+
+    noteBtn(){
+      console.log("康奈尔笔记");
+    }
   },
   components: {
 
@@ -86,6 +110,12 @@ export default {
     text-align: center;
     line-height: 300px;
     margin: 0 auto;
+  }
+
+  .loginInfo{
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 
 </style>

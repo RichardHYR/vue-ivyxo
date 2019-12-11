@@ -1,6 +1,7 @@
 <template>
   <div class="box">
     <div class="top"></div>
+    <i class="el-icon-back" @click="back"></i>
     <div class="register_border">
       <div class="top"></div>
       <div class="register_title">登录</div>
@@ -34,6 +35,11 @@ export default {
     };
   },
   methods: {
+
+    back(){
+      this.$router.go(-1);
+    },
+
     login(){
       console.log("登录:" + this.account
                   + "..." + this.psw);
@@ -43,7 +49,7 @@ export default {
           // 获取数据成功后的其他操作
           console.log("获取接口数据" + JSON.stringify(res));                     
       });
-      console.log("环境数据:" + JSON.stringify(process.env));          
+                
     }
   },
   components: {
@@ -90,5 +96,9 @@ export default {
   height: 50px;
   float: right;
   margin-top: 5px;
+}
+.el-icon-back{
+  margin-left: 50px;
+  font-size: 50px;
 }
 </style>
