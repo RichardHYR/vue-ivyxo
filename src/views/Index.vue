@@ -14,8 +14,8 @@
         </div>
 
         <div class="loginInfo">
-          name
-          account
+          {{name}}
+          {{account}}
         </div>
 
       </el-header>
@@ -36,7 +36,8 @@ export default {
   name: "Index",
   data() {
     return {
-      
+      name:"Richard",
+      account:"15018226580"
     };
   },
   methods: {
