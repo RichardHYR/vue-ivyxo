@@ -31,7 +31,7 @@ if (process.env.NODE_ENV == 'development') {
 } else if (process.env.NODE_ENV == 'production') {
   base = ''
 } else {
-  base = ""
+  base = ''
 }
 
 export const postRequest = (url, params) => {
