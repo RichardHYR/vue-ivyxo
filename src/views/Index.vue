@@ -8,14 +8,19 @@
           IVYXO
         </div>
 
-        <div class="reg">
+        <div class="reg" v-show="showLoginInfo == 0">
           <el-button type="primary" round @click="registerBtn">注册</el-button>
           <el-button type="success" round @click="loginBtn">登录</el-button>
         </div>
 
-        <div class="loginInfo">
-          {{name}}
-          {{account}}
+        <div class="loginInfo" v-show="showLoginInfo == 1">
+          
+          <div class="login_info">
+            {{name}}  {{account}}
+          </div>
+
+          <el-button type="danger" round @click="loginOutBtn">退出登录</el-button>
+
         </div>
 
       </el-header>
@@ -32,15 +37,38 @@
   </div>
 </template>
 <script>
+import { isNotNullORBlank } from "@/utils/utils.js";
+import { checkLoginApi, loginOutApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
+
 export default {
   name: "Index",
   data() {
     return {
-      name:"Richard",
-      account:"15018226580"
+      showLoginInfo:0,
+      name:"",
+      account:""
     };
   },
   methods: {
+
+    loginOutBtn(){
+      console.log("退出登录");
+      loginOutApi().then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取loginOutApi接口数据" + JSON.stringify(res));
+        if(res.code == 200){
+          //删除本地缓存
+          localStorage.removeItem("user_info");
+          //切换为按钮
+          this.showLoginInfo = 0;
+          this.$message({
+            message: "退出成功",
+            type: 'success'
+          });
+        }
+
+      });
+    },
 
     registerBtn(){
       console.log("注册");
@@ -54,16 +82,46 @@ export default {
 
     webInfoBtn(){
       console.log("站点信息");
+      this.$router.push({path:'/info',query:{}});
     },
 
     noteBtn(){
       console.log("康奈尔笔记");
+    },
+
+    settingLoginInfo(){
+      let userInfo = localStorage.getItem("user_info") == null?null:JSON.parse(localStorage.getItem("user_info"));
+      console.log("执行登录检查");
+      this.name = userInfo.name;
+      this.account = userInfo.account;
+      this.showLoginInfo = 1;
+    },
+
+    isLogin(){
+      let userInfo = localStorage.getItem("user_info") == null?null:JSON.parse(localStorage.getItem("user_info"));
+
+      if(!isNotNullORBlank(userInfo)){
+        return;
+      }
+      checkLoginApi(userInfo.id,userInfo.userSession).then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取checkLoginApi接口数据" + JSON.stringify(res));
+        if(res.code != 200){
+          localStorage.removeItem("user_info");
+          return;
+        }
+        this.settingLoginInfo();
+      });
+
     }
   },
   components: {
 
   },
-  mounted() {}
+  mounted() {
+    console.log("打包配置的信息:",JSON.stringify(process.env));
+    this.isLogin();
+  }
 };
 </script>
 
@@ -117,6 +175,10 @@ export default {
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+
+  .login_info{
+    display: inline;
   }
 
 </style>

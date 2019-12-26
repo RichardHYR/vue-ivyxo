@@ -32,5 +32,14 @@ export default new Router({
         // helpType: 1
       },
     },
+    {
+      path: '/info',
+      name: 'Info',
+      component: () => import('@/views/Info'),
+      meta: {
+        keepAlive: false, // 需要被缓存
+        // helpType: 1
+      },
+    },
   ]
 })

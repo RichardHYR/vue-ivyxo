@@ -25,7 +25,8 @@
   </div>
 </template>
 <script>
-import { login } from '@/utils/api_url_utils.js';// 导入我们的api接口
+import { isNotNullORBlank } from "@/utils/utils.js";
+import { loginApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
 export default {
   name: "Login",
   data() {
@@ -45,9 +46,18 @@ export default {
                   + "..." + this.psw);
       // 调用api接口，并且提供了两个参数
       let _this = this;                
-      login(_this.account,_this.psw).then(res => {
-          // 获取数据成功后的其他操作
-          console.log("获取接口数据" + JSON.stringify(res));                     
+      loginApi(_this.account,_this.psw).then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取接口数据" + JSON.stringify(res));
+        if(res.code == 200){
+          localStorage.setItem("user_info",JSON.stringify(res.data));
+          this.$router.push({path:'/',query:{}});
+        }else{
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+        }                   
       });
                 
     }
@@ -55,7 +65,12 @@ export default {
   components: {
 
   },
-  mounted() {}
+  mounted() {
+    let account = sessionStorage.getItem("user_account");
+    if(isNotNullORBlank(account)){
+      this.account = account;
+    }
+  }
 };
 </script>
 

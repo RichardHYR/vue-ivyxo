@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+import { registerApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
 export default {
   name: "Register",
   data() {
@@ -56,6 +57,27 @@ export default {
                   + "..." + this.name
                   + "..." + this.psw1
                   + "..." + this.psw2);
+      // 调用api接口
+      let _this = this;
+      let params = {
+        "account" : _this.account,
+        "name" : _this.name,
+        "psw1" : _this.psw1,
+        "psw2" : _this.psw2
+      };                
+      registerApi(params).then(res => {
+          // 获取数据成功后的其他操作
+          console.log("获取接口数据" + JSON.stringify(res));
+          if(res.code == 200){
+            sessionStorage.setItem("user_account",res.data.account);
+            this.$router.push({path:'/login',query:{}});
+          }else{
+            this.$message({
+              message: res.msg,
+              type: 'warning'
+            });
+          }                     
+      });
     }
   },
   components: {
