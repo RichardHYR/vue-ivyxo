@@ -50,5 +50,14 @@ export default new Router({
         // helpType: 1
       },
     },
+    {
+      path: '/noteList',
+      name: 'NoteList',
+      component: () => import('@/views/NoteList'),
+      meta: {
+        keepAlive: false, // 需要被缓存
+        // helpType: 1
+      },
+    },
   ]
 })

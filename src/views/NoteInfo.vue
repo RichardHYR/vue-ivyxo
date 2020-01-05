@@ -23,7 +23,7 @@
     (摘自百度百科)</pre>
       </div>
       
-      <el-button type="primary" plain class="enterBtn">开始使用</el-button>
+      <el-button type="primary" plain class="enterBtn" @click="startBtn">开始使用</el-button>
 
     </div>
   </div>
@@ -42,7 +42,9 @@ export default {
       this.$router.push({path:'/',query:{}});
     },
 
-
+    startBtn(){
+      this.$router.push({path:'/noteList',query:{}});
+    },
 
   },
   components: {},
