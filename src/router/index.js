@@ -41,5 +41,14 @@ export default new Router({
         // helpType: 1
       },
     },
+    {
+      path: '/noteInfo',
+      name: 'NoteInfo',
+      component: () => import('@/views/NoteInfo'),
+      meta: {
+        keepAlive: false, // 需要被缓存
+        // helpType: 1
+      },
+    },
   ]
 })

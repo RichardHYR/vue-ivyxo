@@ -8,7 +8,13 @@ import 'element-ui/lib/theme-chalk/index.css';
 //图片懒加载
 import VueLazyLoad from 'vue-lazyload'
 import component from './components'
+import  VueQuillEditor from 'vue-quill-editor'
+// require styles 引入样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
+Vue.use(VueQuillEditor)
 Vue.use(VueLazyLoad)
 Vue.use(component)
 Vue.use(ElementUI)
