@@ -1,7 +1,7 @@
 <template>
 
   <quill-editor
-    style="height: 400px;"
+    style="height: 400px;margin:0 auto;width:350px;"
     v-model="content"
     ref="myQuillEditor"
     :options="editorOption"
@@ -41,6 +41,19 @@ export default {
       //内容改变事件
       console.log("内容改变事件" + this.content);
     },
+
+    getContent(){
+      return this.content;
+    },
+
+    setContent(content){
+      this.content = content;
+    }
+
+  },
+
+  mounted(){
+
   }
 };
 </script>   

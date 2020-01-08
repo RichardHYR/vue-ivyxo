@@ -20,46 +20,46 @@
       
       <div v-if="!emptyList" class="main_left_list" v-loading="listLoading">
 
-        <div class="main_left_list_item" v-for="(item, index) in noteList" :key="index">
+        <div class="main_left_list_item" @click="noteItem(index)" v-for="(item, index) in noteList" :key="index">
           <p class="main_left_list_item_title">{{ item.title }}</p>
           <p class="main_left_list_item_date">{{ item.date }}</p>
         </div>
 
-        <div class="main_left_page">
-          <el-pagination
-            small
-            layout="prev, pager, next"
-            :pager-count="5"
-            :page-size="5"
-            :total="50"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            @prev-click="handlePrevClick"
-            @next-click="handleNextClick">
-          </el-pagination>
-        </div>
-
       </div>
 
-      <p v-else class="main_left_list_emptyItem">木有找到~</p>
+      <div class="main_left_page" v-if="!emptyList">
+        <el-pagination
+          small
+          layout="prev, pager, next"
+          :pager-count="5"
+          :page-size="5"
+          :total="50"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          @prev-click="handlePrevClick"
+          @next-click="handleNextClick">
+        </el-pagination>
+      </div>
+
+      <p v-if="emptyList" class="main_left_list_emptyItem">木有找到~</p>
 
     </div>
 
     <!-- 右 -->
     <div class="main_right">
       <div class="main_right_head" @click="handleTitle">
-        haha
+        <div v-html="noteDetail.title"></div>
       </div>
       <div class="main_right_center">
         <div class="main_right_center_left">
-          hehe-haha
+          {{ noteDetail.keyword }}
         </div>
-        <div class="main_right_center_right">
-          hehe-lala
+        <div class="main_right_center_right" @click="handleMain">
+          <div v-html="noteDetail.main"></div>
         </div>
       </div>
       <div class="main_right_footer">
-        lala
+        {{ noteDetail.summary }}
       </div>
     </div>
 
@@ -68,12 +68,12 @@
       title="我是标题"
       :visible.sync="drawer"
       direction="ltr"
-      :before-close="handleClose">
-      <editor></editor>
+      :before-close="handleClose"
+      @opened="handleOpen(swtichDrawer)">
+      <editor ref="editor"></editor>
+      <el-button type="primary" round class="editorBtn" @click="editorConfirm">确定</el-button>
     </el-drawer>
     
-
-
   </div>
 </template>
 <script>
@@ -81,15 +81,66 @@ export default {
   name: "NoteList",
   data() {
     return {
+      "swtichDrawer":0,
       "drawer":false,
       "emptyList":false,
       "listLoading":false,
       "searchValue":"",
-      "noteList":[{"title":"hehe","date":"2020-1-5 19:09:00"},{"title":"haha","date":"2020-1-5 19:09:00"}
-                  ,{"title":"hehedajfkdjsfkajkdjfjkasjfkajdk","date":"2020-1-5 19:09:00"},{"title":"hahadfdffddffdfdf","date":"2020-1-5 19:09:00"}]
+      "noteDetail":{
+        "title":"titleInfo",
+        "keyword":"keywordInfo",
+        "main":"mainInfo",
+        "summary":"summaryInfo"
+      },
+      "noteList":[{"title":"hehe","date":"2020-1-5 19:09:00","keywordContent":"2","mainContent":"3","summaryContent":"4"}
+                  ,{"title":"dada","date":"2020-1-8 22:01:51","keywordContent":"6","mainContent":"7","summaryContent":"8"}
+                  ,{"title":"lala","date":"2020-1-8 22:01:58","keywordContent":"10","mainContent":"11","summaryContent":"12"}]
     };
   },
   methods: {
+
+    getNoteContent(){
+      return this.noteDetail.title;
+    },
+
+    noteItem(val){
+      console.log("笔记列表:" + val);
+      let data = this.noteList[val];
+      this.noteDetail.title = data.title;
+      this.noteDetail.keyword = data.keywordContent;
+      this.noteDetail.main = data.mainContent;
+      this.noteDetail.summary = data.summaryContent;
+      
+    },
+
+    editorConfirm(){
+      console.log("编辑确定:" + this.$refs.editor.getContent());
+      this.drawer = false;
+      switch (this.swtichDrawer) {
+        case 1:
+          this.noteDetail.title = this.$refs.editor.getContent();
+          break;
+        case 3:
+          this.noteDetail.main = this.$refs.editor.getContent();
+          break;
+        default:
+          break;
+      }
+    },
+
+    handleOpen(val){
+      console.log("打开" + val);
+      switch (val) {
+        case 1:
+          this.$refs.editor.setContent(this.noteDetail.title);
+          break;
+        case 3:
+          this.$refs.editor.setContent(this.noteDetail.main);
+          break;
+        default:
+          break;
+      }
+    },
 
     handleClose(done) {
       this.$confirm('确认关闭？')
@@ -101,6 +152,12 @@ export default {
 
     handleTitle(){
       this.drawer = true;
+      this.swtichDrawer = 1;
+    },
+
+    handleMain(){
+      this.drawer = true;
+      this.swtichDrawer = 3;
     },
     
     // 翻页事件
@@ -182,35 +239,39 @@ export default {
   left: 30%;
 }
 .main_right_head{
+  overflow: hidden;
   padding-left: 10px;
-  font-size: 30px;
-  line-height: 50px;
+  /* font-size: 30px;
+  line-height: 50px; */
   background-color: blue;
-  width: 700px;
+  width: 100%;
   height: 10%;
 }
 .main_right_center{
+  overflow: hidden;
   background-color: red;
-  width: 700px;
+  width: 100%;
   height: 65%;
 }
 .main_right_center_left{
-  display: inline-block;
+  float: left;
+  /* display: inline-block; */
   background-color: green;
   width: 30%;
   height: 100%;
 }
 .main_right_center_right{
-  display: inline-block;
+  float: left;
+  /* display: inline-block; */
   background-color: purple;
   width: 70%;
   height: 100%;
 }
 .main_right_footer{
-  padding-top: 10px;
-  padding-left: 10px;
+  /* padding-top: 10px;
+  padding-left: 10px; */
   background-color: yellow;
-  width: 700px;
+  width: 100%;
   height: 25%;
 }
 .main_left_list{
@@ -257,12 +318,15 @@ export default {
 }
 .main_left_page{
   width: 200px;
-  /* margin: 0 auto; */
+  margin: 0 auto;
 }
 .main_left_list_emptyItem{
   width: 200px;
   /* margin: 0 auto; */
   margin-left: 25px;
 }
-
+.editorBtn{
+  margin-top: 50px;
+  margin-left: 20px;
+}
 </style>
