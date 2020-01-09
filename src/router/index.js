@@ -59,5 +59,15 @@ export default new Router({
         // helpType: 1
       },
     },
+    {
+      path: '/setting',
+      name: 'Setting',
+      component: () => import('@/views/Setting'),
+      meta: {
+        keepAlive: false, // 需要被缓存
+        // helpType: 1
+      },
+    },
+
   ]
 })

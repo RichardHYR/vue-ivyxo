@@ -19,6 +19,10 @@
             {{name}}  {{account}}
           </div>
 
+          <div class="settingBtn" @click="settingBtn">
+            <i class="el-icon-setting"></i>
+          </div>
+
           <el-button type="danger" round @click="loginOutBtn">退出登录</el-button>
 
         </div>
@@ -31,7 +35,6 @@
           <el-button type="info" plain @click="noteBtn">康奈尔笔记</el-button>
         </div>
       </el-main>
-
     </el-container>
 
   </div>
@@ -50,6 +53,10 @@ export default {
     };
   },
   methods: {
+
+    settingBtn(){
+      this.$router.push({path:'/setting',query:{}});
+    },
 
     loginOutBtn(){
       console.log("退出登录");
@@ -173,6 +180,7 @@ export default {
   }
 
   .loginInfo{
+    overflow: hidden;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -180,6 +188,14 @@ export default {
 
   .login_info{
     display: inline;
+  }
+
+  .settingBtn{
+    display:inline-block;
+    font-size: 25px;
+    margin-right: 10px;
+    margin-left: 10px;
+    /* margin-top: 5px; */
   }
 
 </style>
