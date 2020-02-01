@@ -25,6 +25,7 @@
       
       <el-button type="primary" plain class="enterBtn" @click="startBtn">开始使用</el-button>
 
+      
     </div>
   </div>
 </template>

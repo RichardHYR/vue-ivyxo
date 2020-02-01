@@ -94,7 +94,7 @@ export default {
 
     noteBtn(){
       console.log("康奈尔笔记");
-      this.$router.push({path:'/noteInfo',query:{}});
+      this.$router.push({path:'/note',query:{}});
     },
 
     settingLoginInfo(){

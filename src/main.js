@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import VueRouter from 'vue-router'
+import routes from './router/router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 // //快速点击插件
@@ -22,6 +23,17 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 // // 加载FastClick
 // fastClick.attach(document.body)
+
+//解决二级路由跳转的报错
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
+Vue.use(VueRouter)
+const router = new VueRouter({
+	routes
+})
 
 new Vue({
   el: '#app',
