@@ -7,6 +7,8 @@ const info = r => require.ensure([], () => r(require('../views/Info')), 'info')
 const setting = r => require.ensure([], () => r(require('../views/Setting')), 'setting')
 const note = r => require.ensure([], () => r(require('../views/NoteInfo')), 'noteInfo')
 const noteList = r => require.ensure([], () => r(require('../views/NoteList')), 'noteList')
+const noteList2 = r => require.ensure([], () => r(require('../views/NoteList2')), 'noteList2')
+
 
 export default [{
     path: '/',
@@ -44,6 +46,10 @@ export default [{
         {
             path: '/noteList',
             component: noteList
-        }
+        },
+        {
+            path: '/noteList2',
+            component: noteList2
+        },
     ]
 }]
