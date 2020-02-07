@@ -1,7 +1,7 @@
 <template>
 
   <quill-editor
-    style="height: 400px;margin:0 auto;width:350px;"
+    
     v-model="content"
     ref="myQuillEditor"
     :options="editorOption"
@@ -40,6 +40,7 @@ export default {
     onEditorChange() {
       //内容改变事件
       console.log("内容改变事件" + this.content);
+      this.$emit("sendMsg", this.content);
     },
 
     getContent(){
@@ -53,7 +54,7 @@ export default {
   },
 
   mounted(){
-
+    
   }
 };
 </script>   

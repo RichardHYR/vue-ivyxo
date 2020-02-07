@@ -1,435 +1,260 @@
 <template>
   <div class="wrap">
-    <!-- 主页按钮 -->
-    <div class="homeBtn" @click="homeBtn">
-      <i class="el-icon-s-home"></i>
-    </div>
-    <!-- 添加按钮 -->
-    <div class="addBtn" @click="addBtn">
-      <i class="el-icon-circle-plus"></i>
-    </div>
-    <!-- 左 -->
-    <div class="main_left">
-      <p class="main_left_title">目录</p>
-
-      <div class="main_left_select">
-        <el-input
-          size="small"
-          placeholder="请输入内容"
-          @change="handleSelectValue"
-          v-model="searchValue">
-          <i slot="suffix" @click="handleSelectValue(searchValue)" class="el-input__icon el-icon-search"></i>
-        </el-input>
+    <div class="box">
+      <div
+        class="add_btn"
+        @click="dialogVisibleAddNote = true"
+      >
+        <i class="el-icon-circle-plus"></i>
       </div>
-      
-      <div v-if="!emptyList" class="main_left_list" v-loading="listLoading">
+      <div
+        class="home_btn"
+        @click="handleHome"
+      >
+        <i class="el-icon-s-home"></i>
+      </div>
+      <p class="title">笔记列表</p>
+      <div class="main">
+        <div class="main_list">
 
-        <div class="main_left_list_item" v-for="(item, index) in noteList" :key="index">
-          <div class="main_left_list_item_del" @click="delBtn(item)">
-            <i class="el-icon-delete"></i>
+          <div
+            class="main_list_item"
+            v-for="(item, index) in pagination.list"
+            :key="index"
+          >
+            <p
+              class="main_list_item_title"
+              @click="handleSelected(item)"
+            >item{{ item }}</p>
+            <p class="main_list_item_date">2020-2-2 21:18:35</p>
+            <el-popconfirm
+              @onConfirm="handleItemDel(item)"
+              confirmButtonText='是哒'
+              cancelButtonText='算了'
+              icon="el-icon-info"
+              iconColor="red"
+              title="是否删除？"
+            >
+              <div
+                slot="reference"
+                class="main_list_item_del"
+              >
+                <i class="el-icon-delete"></i>
+              </div>
+            </el-popconfirm>
+
           </div>
-          <div class="main_left_list_item_target" @click="noteItem(index)">
-            <p class="main_left_list_item_title">{{ item.title }}</p>
-            <p class="main_left_list_item_date">{{ item.date }}</p>
-          </div>
+
         </div>
-
       </div>
 
-      <div class="main_left_page" v-if="!emptyList">
+      <div class="page_select">
         <el-pagination
-          small
+          background
           layout="prev, pager, next"
           :pager-count="5"
-          :page-size="5"
-          :total="50"
+          :page-size="pagination.pageSize"
+          :total="pagination.total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           @prev-click="handlePrevClick"
-          @next-click="handleNextClick">
+          @next-click="handleNextClick"
+        >
         </el-pagination>
       </div>
 
-      <p v-if="emptyList" class="main_left_list_emptyItem">木有找到~</p>
-
     </div>
 
-    <!-- 右 -->
-    <div class="main_right">
-      <div class="main_right_head" @click="handleTitle">
-        {{ noteDetail.title }}
-      </div>
-      <div class="main_right_center">
-        <div class="main_right_center_left" @click="handleKeyword">
-          {{ noteDetail.keyword }}
-        </div>
-        <div class="main_right_center_right" @click="handleMain">
-          <div v-html="noteDetail.main"></div>
-        </div>
-      </div>
-      <div class="main_right_footer" @click="handleSummary">
-        {{ noteDetail.summary }}
-      </div>
-    </div>
-
-    <el-drawer
-      size="30%"
-      title="正文编辑"
-      :visible.sync="drawer"
-      direction="ltr"
-      :before-close="handleClose"
-      @opened="handleOpen(swtichDrawer)">
-      <editor ref="editor"></editor>
-      <el-button type="primary" round class="editorBtn" @click="editorConfirm">确定</el-button>
-    </el-drawer>
-
+    <!-- 添加笔记组件 -->
     <el-dialog
-      title="编辑"
-      :visible.sync="dialogVisible"
-      width="50%"
-      :before-close="handleDialogClose">
-      <el-input v-model="editorValue" placeholder="请输入内容"></el-input>
-      <div class="dialog_button">
-        <el-button @click="editCancelBtn">取消</el-button>
-        <el-button @click="editConfirmBtn" type="primary">确定</el-button>
-      </div>
+      title="添加笔记"
+      :visible.sync="dialogVisibleAddNote"
+      width="500px"
+      center
+      :close-on-click-modal="false"
+    >
+      <span style="display: inline-block;">标题:</span>
+      <el-input
+        style="width:300px;margin-left:10px;"
+        v-model="addNote.title"
+        placeholder="请输入标题"
+      ></el-input>
+      <el-button
+        style="margin-left:10px;"
+        type="primary"
+        round
+        @click="handleAddNote"
+      >确定</el-button>
     </el-dialog>
-    
+
   </div>
 </template>
+
 <script>
 export default {
-  name: "NoteList",
   data() {
     return {
-      "swtichEdit":0,
-      "editorValue":"",
-      "dialogVisible":false,
-      "swtichDrawer":0,
-      "drawer":false,
-      "emptyList":false,
-      "listLoading":false,
-      "searchValue":"",
-      "noteDetail":{
-        "title":"titleInfo",
-        "keyword":"keywordInfo",
-        "main":"mainInfo",
-        "summary":"summaryInfo"
+      addNote: {
+        title: ""
       },
-      "noteList":[{"title":"hehe","date":"2020-1-5 19:09:00","keywordContent":"2","mainContent":"3","summaryContent":"4"}
-                  ,{"title":"dada","date":"2020-1-8 22:01:51","keywordContent":"6","mainContent":"7","summaryContent":"8"}
-                  ,{"title":"lala","date":"2020-1-8 22:01:58","keywordContent":"10","mainContent":"11","summaryContent":"12"}]
+      dialogVisibleAddNote: false,
+      pagination: {
+        list: [1, 2, 3],
+        pageSize: 5,
+        total: 50
+      }
     };
   },
+
   methods: {
-
-    editCancelBtn(){
-      this.swtichEdit = 0;
-      this.dialogVisible = false;
+    handleHome() {
+      this.$router.push({ path: "/", query: {} });
     },
-
-    editConfirmBtn(){
-      console.log("编辑确定");
-      switch (this.swtichEdit) {
-        case 1:
-          this.noteDetail.title = this.editorValue;
-          break;
-        case 2:
-          this.noteDetail.keyword = this.editorValue;
-          break;
-        case 3:
-          this.noteDetail.summary = this.editorValue;
-          break;
-      
-        default:
-          break;
-      }
-      this.swtichEdit = 0;
-      this.dialogVisible = false;
+    handleAddNote() {
+      console.log("添加笔记");
+      this.addNoteMethod();
     },
-
-    getNoteContent(){
-      return this.noteDetail.title;
+    handleSelected(item) {
+      console.log("被选中的文章:" + item);
+      this.$router.push({ path: "/noteDetail", query: {id:1} });
     },
-
-    noteItem(val){
-      console.log("笔记列表:" + val);
-      let data = this.noteList[val];
-      this.noteDetail.title = data.title;
-      this.noteDetail.keyword = data.keywordContent;
-      this.noteDetail.main = data.mainContent;
-      this.noteDetail.summary = data.summaryContent;
+    //删除单个列表数据
+    handleItemDel(item) {
+      console.log("被删除的文章:" + item);
     },
-
-    delBtn(item){
-      console.log("删除:" + JSON.stringify(item));
-    },
-
-    editorConfirm(){
-      console.log("编辑确定:" + this.$refs.editor.getContent());
-      this.drawer = false;
-      switch (this.swtichDrawer) {
-        case 1:
-          this.noteDetail.title = this.$refs.editor.getContent();
-          break;
-        case 2:
-          this.noteDetail.keyword = this.$refs.editor.getContent();
-          break;
-        case 3:
-          this.noteDetail.main = this.$refs.editor.getContent();
-          break;
-        case 4:
-          this.noteDetail.summary = this.$refs.editor.getContent();
-          break;
-        default:
-          break;
-      }
-    },
-
-    handleOpen(val){
-      console.log("打开" + val);
-      switch (val) {
-        case 1:
-          this.$refs.editor.setContent(this.noteDetail.title);
-          break;
-        case 2:
-          this.$refs.editor.setContent(this.noteDetail.keyword);
-          break;
-        case 3:
-          this.$refs.editor.setContent(this.noteDetail.main);
-          break;
-        case 4:
-          this.$refs.editor.setContent(this.noteDetail.summary);
-          break;
-        default:
-          break;
-      }
-    },
-
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(() => {
-          done();
-        })
-      .catch(() => {});
-    },
-
-    handleDialogClose(done) {
-      this.$confirm('确认关闭？')
-        .then(() => {
-          done();
-        })
-        .catch(() => {});
-    },
-
-    handleTitle(){
-      console.log("点击了标题");
-      this.swtichEdit = 1;
-      this.dialogVisible = true;
-      this.editorValue = this.noteDetail.title;
-    },
-
-    handleKeyword(){
-      console.log("点击了关键词列表");
-      this.swtichEdit = 2;
-      this.dialogVisible = true;
-      this.editorValue = this.noteDetail.keyword;
-    },
-
-    handleMain(){
-      this.drawer = true;
-      this.swtichDrawer = 3;
-    },
-
-    handleSummary(){
-      console.log("点击了总结");
-      this.swtichEdit = 3;
-      this.dialogVisible = true;
-      this.editorValue = this.noteDetail.summary;
-    },
-    
     // 翻页事件
-    handleSizeChange(val){
+    handleSizeChange(val) {
       console.log("pageSize 改变时会触发:" + val);
     },
 
-    handleCurrentChange(val){
+    handleCurrentChange(val) {
       console.log("currentPage 改变时会触发:" + val);
     },
 
-    handlePrevClick(val){
+    handlePrevClick(val) {
       console.log("用户点击上一页按钮改变当前页后触发:" + val);
     },
 
-    handleNextClick(val){
+    handleNextClick(val) {
       console.log("用户点击下一页按钮改变当前页后触发:" + val);
     },
 
-    // 搜索框
-    handleSelectValue(val){
-      console.log("搜索框变化:" + val);
-      // 将列表清空，并显示加载图标
-      this.noteList = [];
-      this.listLoading = true;
-      this.emptyList = false;
-      // 等待数据请求完成，设置列表，隐藏加载按钮
-      setTimeout(()=>{
-        this.listLoading = false;
-        this.noteList = [];
-        this.emptyList = (this.noteList.length == 0);
-      },1000);
-
-    },
-
-    homeBtn(){
-      this.$router.push({path:'/',query:{}});
-    },
-
-    addBtn(){
-      console.log("添加按钮");
-    },
-
+    addNoteMethod(){
+       //接口调用时通用的加载遮罩方法
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      setTimeout(() => {
+        loading.close();
+        this.dialogVisibleAddNote = false;
+      }, 2000);
+    }
   },
-  components: {},
-  mounted() {
-    
-  }
+
+  computed: {},
+
+  components: {}
 };
 </script>
+<style lang='css' scoped>
+* {
+  /* border: 1px solid red; */
+}
+.wrap {
+  width: 100%;
+  height: 100vh;
+  background-color: rgb(255, 196, 86);
+}
+.box {
+  /* 居中定位 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-<style scoped src=''>
-*{
-  /* border:1px solid red; */
-}
-.wrap{
-  width: 100%;
-  height: 100%;
-}
-.homeBtn{
-  font-size: 50px;
-  position: absolute;
-  left: 5%;
-  top: 5%;
-}
-.addBtn{
-  font-size: 50px;
-  position: absolute;
-  left: 25%;
-  top: 5%;
-}
-.main_left, .main_right{
+  width: 800px;
+  height: 500px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
-  margin-bottom: 50px;
+  border-radius: 30px;
+  background-color: white;
 }
-.main_left{
-  width: 250px;
-  height: 550px;
-  position: absolute;
-  top: 15%;
-  left: 5%;
-}
-.main_right{
-  overflow: hidden;
-  width: 700px;
-  height: 550px;
-  position: absolute;
-  top: 15%;
-  left: 30%;
-}
-.main_right_head{
-  overflow: hidden;
-  padding-left: 10px;
-  background-color: rgb(255, 255, 255);
-  width: 100%;
-  height: 10%;
-}
-.main_right_center{
-  overflow: hidden;
-  background-color: red;
-  width: 100%;
-  height: 65%;
-}
-.main_right_center_left{
-  float: left;
-  background-color: rgb(160, 160, 160);
-  width: 30%;
-  height: 100%;
-}
-.main_right_center_right{
-  float: left;
-  background-color: rgb(120, 120, 120);
-  width: 70%;
-  height: 100%;
-}
-.main_right_footer{
-  background-color: rgb(60, 60, 60);
-  width: 100%;
-  height: 25%;
-}
-.main_left_list{
-  width: 200px;
-  height: 420px;
-  margin: 0 auto;
-  margin-top: 5px;
-}
-.main_left_list_item{
-  margin-top: 10px;
-  overflow: hidden;
-  width: 200px;
-  height: 90px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
-}
-.main_left_list_item_target{
+.add_btn {
   cursor: pointer;
+  font-size: 50px;
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  right: 30px;
 }
-.main_left_list_item_title{
-  margin: 0;
-  margin-left: 20px;
-  /* margin-top: 20px; */
-  width: 150px;
-  /* word-wrap: break-word; */
-  text-overflow:ellipsis;
-  overflow:hidden;
-
+.home_btn {
+  cursor: pointer;
+  font-size: 50px;
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  left: 30px;
 }
-.main_left_list_item_date{
-  width: 150px;
-  margin: 0;
-  margin-left: 20px;
-  margin-top: 15px;
-}
-.main_left_list_item_del{
-  margin-left: 170px;
-  display:inline-block;
-  font-size: 20px;
-}
-
-.main_left_title{
-  margin: 0;
-  margin-top: 10px;
-  line-height: 30px;
+.title {
+  width: 100%;
+  height: 30px;
   font-size: 30px;
+  line-height: 30px;
   text-align: center;
 }
-.main_left_select{
-  width: 200px;
-  margin: 0 auto;
-  margin-top: 10px;
-}
-.main_left_page{
-  width: 200px;
+.main {
+  width: 700px;
+  height: 350px;
   margin: 0 auto;
 }
-.main_left_list_emptyItem{
-  width: 200px;
-  /* margin: 0 auto; */
-  margin-left: 25px;
+.page_select {
+  width: 600px;
+  height: 35px;
+  margin: 0 auto;
 }
-.editorBtn{
-  margin-top: 50px;
-  margin-left: 20px;
+.main_list {
+  width: 600px;
+  height: 350px;
+  margin: 0 auto;
 }
-.dialog_button{
+.main_list_item {
+  overflow: hidden;
+  position: relative;
+  width: 600px;
+  height: 50px;
   margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 6px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+.main_list_item:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.9);
+}
+.main_list_item_title {
+  margin: 0;
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  display: inline-block;
+
+  cursor: pointer;
+  font-size: 20px;
+  width: 400px;
+}
+.main_list_item_date {
+  margin: 0;
+  position: absolute;
+  top: 22px;
+  right: 45px;
+  display: inline-block;
+}
+.main_list_item_del {
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  display: inline-block;
 }
 </style>
