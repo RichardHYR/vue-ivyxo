@@ -160,14 +160,6 @@ export default {
 };
 </script>
 <style lang='css' scoped>
-* {
-  /* border: 1px solid red; */
-}
-.wrap {
-  width: 100%;
-  height: 100vh;
-  background-color: rgb(255, 196, 86);
-}
 .box {
   /* 居中定位 */
   position: absolute;

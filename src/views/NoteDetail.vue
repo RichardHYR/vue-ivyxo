@@ -133,16 +133,9 @@ export default {
 };
 </script>
 <style lang='css' scoped>
-* {
-  /* border: 1px solid red; */
-}
-.wrap {
-  overflow: hidden;
-  width: 100%;
-  height: 100vh;
+.wrap{
   min-width: 1300px;
   min-height: 1000px;
-  background-color: rgb(255, 196, 86);
 }
 .back_btn {
   display: inline-block;

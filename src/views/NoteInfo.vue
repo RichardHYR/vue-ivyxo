@@ -1,14 +1,14 @@
 <template>
   <div class="wrap">
     <div class="box">
-      <div class="homeBtn" @click="homeBtn">
+      <div class="home_btn" @click="homeBtn">
           <i class="el-icon-s-home"></i>
       </div>
-      <div class="title">康奈尔笔记</div>
+      <p class="title">康奈尔笔记</p>
       <div class="main_left">
         <el-image
           style="width: 200px; height: 300px"
-          src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+          src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1581184085983&di=99db6b6336614c0d8256f9ce62f8505c&imgtype=0&src=http%3A%2F%2Fwww.gogooffer.com%2Fupload%2F201511%2F11%2F201511111059535088.png"
           fit="scale-down"></el-image>
       </div>
       <div class="main_right">
@@ -56,35 +56,31 @@ export default {
 </script>
 
 <style scoped src=''>
-*{
-  /* border:1px solid red; */
-}
-pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-.wrap{
-  width: 100%;
-  height: 100%;
-}
-.box{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 800px;
-  height: 500px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
-}
-.homeBtn{
+.home_btn {
+  cursor: pointer;
   font-size: 50px;
+  display: inline-block;
   position: absolute;
   left: 20px;
   top: 5px;
 }
+.box{
+  /* 居中定位 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 800px;
+  height: 500px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
+  border-radius: 30px;
+  background-color: white;
+}
 .title{
   font-size: 30px;
   text-align: center;
+  margin: 0;
   margin-top: 20px;
 }
 .main_left{
@@ -103,6 +99,10 @@ pre {
   position: absolute;
   right: 5%;
   top: 20%;
+}
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .enterBtn{
   position: absolute;

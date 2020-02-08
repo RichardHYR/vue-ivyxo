@@ -1,19 +1,17 @@
 <template>
   <div class="wrap">
     <div class="box">
-      <div class="content">
-        <div class="homeBtn" @click="homeBtn">
-          <i class="el-icon-s-home"></i>
-        </div>
-        <div class="content_title">站点信息</div>
-        <div class="content_main">
-          <div class="content_item" v-for="(item, index) in list" :key="index">
-            <p class="content_item_title">{{item.sysTitle}}:</p>
-            <p class="content_item_result">{{item.sysValue}}</p>
-          </div>
-        </div>
-
+      <div class="home_btn" @click="homeBtn">
+        <i class="el-icon-s-home"></i>
       </div>
+      <p class="content_title">站点信息</p>
+      <div class="content_main">
+        <div class="content_item" v-for="(item, index) in list" :key="index">
+          <p class="content_item_title">{{item.sysTitle}}:</p>
+          <p class="content_item_result">{{item.sysValue}}</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -58,30 +56,38 @@ export default {
 </script>
 
 <style scoped src=''>
-.box{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 800px;
-  height: 500px;
-  margin: 0 auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
-}
-.homeBtn{
+.home_btn {
+  cursor: pointer;
   font-size: 50px;
+  display: inline-block;
   position: absolute;
   left: 20px;
   top: 5px;
 }
+.box{
+  /* 居中定位 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 800px;
+  height: 500px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
+  border-radius: 30px;
+  background-color: white;
+}
 .content_title{
   font-size: 30px;
   text-align: center;
+  margin: 0;
   margin-top: 20px;
 }
 .content_main{
-  margin-top: 60px;
-  margin-left: 60px;
+  width: 650px;
+  height: 300px;
+  margin: 0 auto;
+  margin-top: 50px;
 }
 .content_item{
   margin-top: 20px;

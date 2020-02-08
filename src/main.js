@@ -15,6 +15,8 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+import './style/common.css'
+
 Vue.use(VueQuillEditor)
 Vue.use(VueLazyLoad)
 Vue.use(component)
