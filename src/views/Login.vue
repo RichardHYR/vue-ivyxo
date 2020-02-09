@@ -53,7 +53,6 @@ export default {
         console.log("获取接口数据" + JSON.stringify(res));
         if(res.code == 200){
           setStore("user_info", res.data);
-          // localStorage.setItem("user_info",JSON.stringify(res.data));
           this.$router.push({path:'/',query:{}});
         }else{
           this.$message({

@@ -93,7 +93,6 @@ export default {
         if (res.code == 200) {
           //删除本地缓存
           removeStore("user_info");
-          // localStorage.removeItem("user_info");
           //切换为按钮
           this.showLoginInfo = 0;
           this.$message({
@@ -127,10 +126,8 @@ export default {
     },
 
     settingLoginInfo() {
-      let userInfo =
-        localStorage.getItem("user_info") == null
-          ? null
-          : JSON.parse(localStorage.getItem("user_info"));
+      let userInfo = getStore("user_info");
+      userInfo = JSON.parse(userInfo);
       console.log("执行登录检查");
       this.name = userInfo.name;
       this.account = userInfo.account;
@@ -138,19 +135,16 @@ export default {
     },
 
     isLogin() {
-      let userInfo =
-        localStorage.getItem("user_info") == null
-          ? null
-          : JSON.parse(localStorage.getItem("user_info"));
-
+      let userInfo = getStore("user_info");
       if (!isNotNullORBlank(userInfo)) {
         return;
       }
+      userInfo = JSON.parse(userInfo);
       checkLoginApi(userInfo.id, userInfo.userSession).then(res => {
         // 获取数据成功后的其他操作
         console.log("获取checkLoginApi接口数据" + JSON.stringify(res));
         if (res.code != 200) {
-          localStorage.removeItem("user_info");
+          removeStore("user_info");
           return;
         }
         this.settingLoginInfo();
@@ -161,7 +155,6 @@ export default {
   mounted() {
     console.log("打包配置的信息:", JSON.stringify(process.env));
     this.isLogin();
-    // this.showLoginInfo = 1;
   }
 };
 </script>

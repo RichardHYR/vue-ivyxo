@@ -3,8 +3,8 @@ import {Message} from 'element-ui'
 import { getStore } from "./utils";
 
 // let userInfo = localStorage.getItem("user_info") == null?null:JSON.parse(localStorage.getItem("user_info"));
-let userInfo = getStore("user_info");
 axios.interceptors.request.use(config=> {
+  let userInfo = getStore("user_info");
   config.headers.common = {
     'user_id':userInfo == null?"":JSON.parse(userInfo).id,
     'user_session':userInfo == null?"":JSON.parse(userInfo).userSession
