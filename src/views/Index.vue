@@ -67,7 +67,7 @@
   </div>
 </template>
 <script>
-import { isNotNullORBlank } from "@/utils/utils.js";
+import { isNotNullORBlank, setStore, getStore, removeStore } from "@/utils/utils.js";
 import { checkLoginApi, loginOutApi } from "@/utils/api_url_utils.js"; // 导入我们的api接口
 
 export default {
@@ -85,13 +85,15 @@ export default {
     },
 
     loginOutBtn() {
-      console.log("退出登录");
+      let userInfo = getStore("user_info");
+      console.log("退出登录:" + userInfo);
       loginOutApi().then(res => {
         // 获取数据成功后的其他操作
         console.log("获取loginOutApi接口数据" + JSON.stringify(res));
         if (res.code == 200) {
           //删除本地缓存
-          localStorage.removeItem("user_info");
+          removeStore("user_info");
+          // localStorage.removeItem("user_info");
           //切换为按钮
           this.showLoginInfo = 0;
           this.$message({
@@ -105,11 +107,13 @@ export default {
     registerBtn() {
       console.log("注册");
       this.$router.push({ path: "/register", query: {} });
+      
     },
 
     loginBtn() {
       console.log("登录");
       this.$router.push({ path: "/login", query: {} });
+      
     },
 
     webInfoBtn() {
@@ -157,6 +161,7 @@ export default {
   mounted() {
     console.log("打包配置的信息:", JSON.stringify(process.env));
     this.isLogin();
+    // this.showLoginInfo = 1;
   }
 };
 </script>

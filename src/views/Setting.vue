@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="box">
-      <div class="homeBtn" @click="homeBtn">
+      <div class="home_btn" @click="homeBtn">
         <i class="el-icon-s-home"></i>
       </div>
       <p class="title">设置</p>
@@ -131,20 +131,26 @@ export default {
 </script>
 
 <style scoped src=''>
+.home_btn {
+  cursor: pointer;
+  font-size: 50px;
+  display: inline-block;
+  position: absolute;
+  left: 20px;
+  top: 5px;
+}
 .box{
+  /* 居中定位 */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
   width: 800px;
   height: 500px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.644), 0 0 6px rgba(0, 0, 0, 0.658);
-}
-.homeBtn{
-  font-size: 50px;
-  position: absolute;
-  left: 20px;
-  top: 5px;
+  border-radius: 30px;
+  background-color: white;
 }
 .title{
   text-align: center;

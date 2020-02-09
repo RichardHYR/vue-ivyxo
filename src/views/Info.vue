@@ -10,6 +10,7 @@
           <p class="content_item_title">{{item.sysTitle}}:</p>
           <p class="content_item_result">{{item.sysValue}}</p>
         </div>
+
       </div>
 
     </div>

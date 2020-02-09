@@ -1,4 +1,6 @@
 module.exports = {
+    //关闭代码检查
+    lintOnSave: false,
     // 基本路径
     publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
     // // outputDir: 在npm run build 或 yarn build 时 ，生成文件的目录名称（要和baseUrl的生产环境路径一致）

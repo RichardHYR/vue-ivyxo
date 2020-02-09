@@ -27,7 +27,7 @@
   </div>
 </template>
 <script>
-import { isNotNullORBlank } from "@/utils/utils.js";
+import { isNotNullORBlank, setStore, getStore, removeStore } from "@/utils/utils.js";
 import { loginApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
 export default {
   name: "Login",
@@ -52,7 +52,8 @@ export default {
         // 获取数据成功后的其他操作
         console.log("获取接口数据" + JSON.stringify(res));
         if(res.code == 200){
-          localStorage.setItem("user_info",JSON.stringify(res.data));
+          setStore("user_info", res.data);
+          // localStorage.setItem("user_info",JSON.stringify(res.data));
           this.$router.push({path:'/',query:{}});
         }else{
           this.$message({
