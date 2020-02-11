@@ -1,10 +1,14 @@
 <template>
   <div class="wrap">
     <div class="header">
+
       <div class="logo">IVYXO</div>
+
+      <loginInfo></loginInfo>
+
       <div
         class="reg"
-        v-show="showLoginInfo == 0"
+        v-show="!showLoginInfo"
       >
         <el-button
           type="primary"
@@ -16,33 +20,8 @@
           round
           @click="loginBtn"
         >登录</el-button>
-        
       </div>
-
-      <div
-        class="loginInfo"
-        v-show="showLoginInfo == 1"
-      >
-
-        <div class="login_info">
-          {{name}} {{account}}
-        </div>
-
-        <div
-          class="settingBtn"
-          @click="settingBtn"
-        >
-          <i class="el-icon-setting"></i>
-        </div>
-
-        <el-button
-          type="danger"
-          round
-          @click="loginOutBtn"
-        >退出登录</el-button>
-
-      </div>
-
+      
     </div>
 
     <div class="center">
@@ -74,35 +53,12 @@ export default {
   name: "Index",
   data() {
     return {
-      showLoginInfo: 0,
       name: "name",
       account: "account"
     };
   },
   methods: {
-    settingBtn() {
-      this.$router.push({ path: "/setting", query: {} });
-    },
-
-    loginOutBtn() {
-      let userInfo = getStore("user_info");
-      console.log("退出登录:" + userInfo);
-      loginOutApi().then(res => {
-        // 获取数据成功后的其他操作
-        console.log("获取loginOutApi接口数据" + JSON.stringify(res));
-        if (res.code == 200) {
-          //删除本地缓存
-          removeStore("user_info");
-          //切换为按钮
-          this.showLoginInfo = 0;
-          this.$message({
-            message: "退出成功",
-            type: "success"
-          });
-        }
-      });
-    },
-
+    
     registerBtn() {
       console.log("注册");
       this.$router.push({ path: "/register", query: {} });
@@ -125,36 +81,15 @@ export default {
       this.$router.push({ path: "/note", query: {} });
     },
 
-    settingLoginInfo() {
-      let userInfo = getStore("user_info");
-      userInfo = JSON.parse(userInfo);
-      console.log("执行登录检查");
-      this.name = userInfo.name;
-      this.account = userInfo.account;
-      this.showLoginInfo = 1;
-    },
-
-    isLogin() {
-      let userInfo = getStore("user_info");
-      if (!isNotNullORBlank(userInfo)) {
-        return;
-      }
-      userInfo = JSON.parse(userInfo);
-      checkLoginApi(userInfo.id, userInfo.userSession).then(res => {
-        // 获取数据成功后的其他操作
-        console.log("获取checkLoginApi接口数据" + JSON.stringify(res));
-        if (res.code != 200) {
-          removeStore("user_info");
-          return;
-        }
-        this.settingLoginInfo();
-      });
-    }
   },
   components: {},
+  computed:{
+    showLoginInfo(){
+      return this.$store.state.isLogin;
+    }
+  },
   mounted() {
     console.log("打包配置的信息:", JSON.stringify(process.env));
-    this.isLogin();
   }
 };
 </script>

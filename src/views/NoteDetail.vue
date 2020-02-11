@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+    <!-- <loginInfo></loginInfo> -->
     <div
       class="back_btn"
       @click="handleBack"
@@ -142,7 +143,7 @@ export default {
   cursor: pointer;
   font-size: 35px;
   position: absolute;
-  top: 10px;
+  top: 60px;
   left: 20px;
 }
 .back_btn:hover {
@@ -154,7 +155,7 @@ export default {
   cursor: pointer;
   font-size: 35px;
   position: absolute;
-  top: 10px;
+  top: 60px;
   left: 580px;
 }
 .update_btn:hover {
@@ -163,7 +164,7 @@ export default {
 }
 .editor_area {
   position: absolute;
-  top: 70px;
+  top: 120px;
   left: 20px;
   width: 600px;
   height: 800px;
@@ -208,7 +209,7 @@ export default {
 }
 .main {
   position: absolute;
-  top: 20px;
+  top: 70px;
   left: 650px;
   width: 600px;
   height: 850px;

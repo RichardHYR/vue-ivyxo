@@ -20,12 +20,12 @@
 
       <div class="common_input">
         <div class="common_input_title">密码:</div>
-        <el-input class="common_input_box" placeholder="请输入密码" v-model="psw1"></el-input>
+        <el-input class="common_input_box" placeholder="请输入密码" v-model="psw1" show-password></el-input>
       </div>
 
       <div class="common_input">
         <div class="common_input_title">确认密码:</div>
-        <el-input class="common_input_box" placeholder="请输入密码" v-model="psw2"></el-input>
+        <el-input class="common_input_box" placeholder="请输入密码" v-model="psw2" show-password></el-input>
       </div>
 
       <div class="common_input">

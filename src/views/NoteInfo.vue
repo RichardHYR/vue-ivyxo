@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+    <loginInfo></loginInfo>
     <div class="box">
       <div class="home_btn" @click="homeBtn">
           <i class="el-icon-s-home"></i>

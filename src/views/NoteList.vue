@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+    <loginInfo></loginInfo>
     <div class="box">
       <div
         class="add_btn"

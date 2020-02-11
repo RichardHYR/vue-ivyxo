@@ -1,12 +1,20 @@
 <template>
   <div class="wrap">
+    <loginInfo></loginInfo>
     <div class="box">
-      <div class="home_btn" @click="homeBtn">
+      <div
+        class="home_btn"
+        @click="homeBtn"
+      >
         <i class="el-icon-s-home"></i>
       </div>
       <p class="content_title">站点信息</p>
       <div class="content_main">
-        <div class="content_item" v-for="(item, index) in list" :key="index">
+        <div
+          class="content_item"
+          v-for="(item, index) in list"
+          :key="index"
+        >
           <p class="content_item_title">{{item.sysTitle}}:</p>
           <p class="content_item_result">{{item.sysValue}}</p>
         </div>
@@ -17,41 +25,38 @@
   </div>
 </template>
 <script>
-import { infoApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
+import { infoApi } from "@/utils/api_url_utils.js"; // 导入我们的api接口
 export default {
   name: "Info",
   data() {
     return {
-      "list":[]
+      list: []
     };
   },
   methods: {
-
-    homeBtn(){
-      this.$router.push({path:'/',query:{}});
+    homeBtn() {
+      this.$router.push({ path: "/", query: {} });
     },
 
-    settingInfo(data){
+    settingInfo(data) {
       this.list = data;
     },
 
-    getInfo(){
+    getInfo() {
       // 调用api接口，并且提供了两个参数
-      // let _this = this;                
+      // let _this = this;
       infoApi().then(res => {
         // 获取数据成功后的其他操作
         console.log("获取info接口数据" + JSON.stringify(res));
-        if(res.code == 200){
+        if (res.code == 200) {
           this.settingInfo(res.data);
-        }                 
-      });          
+        }
+      });
     }
-
   },
   components: {},
   mounted() {
     this.getInfo();
-    
   }
 };
 </script>
@@ -65,7 +70,7 @@ export default {
   left: 20px;
   top: 5px;
 }
-.box{
+.box {
   /* 居中定位 */
   position: absolute;
   top: 50%;
@@ -78,26 +83,26 @@ export default {
   border-radius: 30px;
   background-color: white;
 }
-.content_title{
+.content_title {
   font-size: 30px;
   text-align: center;
   margin: 0;
   margin-top: 20px;
 }
-.content_main{
+.content_main {
   width: 650px;
   height: 300px;
   margin: 0 auto;
   margin-top: 50px;
 }
-.content_item{
+.content_item {
   margin-top: 20px;
   margin-left: 20px;
 }
-.content_item_title{
+.content_item_title {
   display: inline;
 }
-.content_item_result{
+.content_item_result {
   display: inline;
   margin-left: 20px;
 }

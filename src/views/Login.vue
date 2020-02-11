@@ -15,7 +15,7 @@
 
       <div class="common_input">
         <div class="common_input_title">密码:</div>
-        <el-input class="common_input_box" placeholder="请输入密码" v-model="psw"></el-input>
+        <el-input class="common_input_box" placeholder="请输入密码" v-model="psw" show-password @keyup.enter.native="login"></el-input>
       </div>
 
       <div class="common_input">
@@ -52,7 +52,7 @@ export default {
         // 获取数据成功后的其他操作
         console.log("获取接口数据" + JSON.stringify(res));
         if(res.code == 200){
-          setStore("user_info", res.data);
+          this.$store.dispatch('actionSetUserInfo', res.data);
           this.$router.push({path:'/',query:{}});
         }else{
           this.$message({
