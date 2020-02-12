@@ -35,9 +35,9 @@ export default {
             // console.log("获取checkLoginApi接口数据" + JSON.stringify(res));
             if (res.code != 200) {
                 //失败
-                // removeStore("user_info");
-                // commit('setIsLogin', true);
-                actionLoginOut();
+                commit('setIsLogin', false);
+                removeStore('user_info');
+                commit('setUserInfo', null);
                 return;
             } else {
                 //成功

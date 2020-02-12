@@ -46,15 +46,21 @@ export default [{
         },
         {
             path: '/noteList',
-            component: noteList
+            component: noteList,
+            meta: {
+                requireAuth: true // 配置此条，进入页面前判断是否需要登陆
+            },
         },
         {
             path: '/noteList2',
             component: noteList2
         },
         {
-            path: '/noteDetail',
-            component: noteDetail
+            path: '/noteDetail/:noteId',
+            component: noteDetail,
+            meta: {
+                requireAuth: true // 配置此条，进入页面前判断是否需要登陆
+            },
         },
     ]
 }]

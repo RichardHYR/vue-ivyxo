@@ -70,15 +70,16 @@
 </template>
 
 <script>
+import { noteUpdateApi, noteGetApi } from "@/utils/api_url_utils.js"; // 导入我们的api接口
 export default {
   data() {
     return {
       changeSelect:1,
-      time: "2020-2-4 23:18:44",
-      title: "titleddddddddddssss",
-      keyword: "<p>111</p>",
-      main: "<p>222</p>",
-      summary: "<p>333</p>",
+      time: "0000-0-0 00:00:00",
+      title: "defaultTitle",
+      keyword: "<p>defaultKeyword</p>",
+      main: "<p>defaultMain</p>",
+      summary: "<p>defaultSummary</p>",
     };
   },
 
@@ -89,6 +90,19 @@ export default {
 
     handleUpdate(){
       console.log("上传更新的笔记");
+      let noteId = this.$route.params.noteId;
+      let params = {
+        "title":this.title,
+        "keywordContent":this.keyword,
+        "summaryContent":this.summary,
+        "mainContent":this.main
+      }
+      this.handleNoteUpdate(noteId, params, ()=>{
+        this.$message({
+          message: '更新成功',
+          type: 'success'
+        });
+      });
     },
 
     handleSendMsg(val) {
@@ -125,11 +139,63 @@ export default {
         default:
           break;
       }
-    }
+    },
+
+    handleNoteGet(id, handleSuccess){
+      noteGetApi(id).then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取noteGetApi接口数据" + JSON.stringify(res));
+        if (res.code == 200) {
+          handleSuccess(res.data);
+          //成功
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+        }
+      });
+    },
+
+    handleNoteUpdate(id, params, handleSuccess){
+      noteUpdateApi(id, params).then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取noteGetApi接口数据" + JSON.stringify(res));
+        if (res.code == 200) {
+          handleSuccess(res.data);
+          //成功
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+        }
+      });
+    },
+
+
+
   },
 
   mounted() {
-    this.$refs.editor.setContent(this.keyword);
+    console.log('获取路由上的noteId:' + this.$route.params.noteId);
+    let noteId = this.$route.params.noteId;
+    console.log('noteId类型判断:' + isNaN(noteId));
+    if(!isNaN(noteId)){
+      this.handleNoteGet(noteId, (data)=>{
+        this.time = data.gmtModified;
+        this.title = data.title;
+        this.keyword = data.keywordContent;
+        this.main = data.mainContent;
+        this.summary = data.summaryContent;
+        this.$refs.editor.setContent(this.keyword);
+      });
+    }else{
+      this.$router.push({ path: "/noteList", query: {} });
+    }    
+    
   }
 };
 </script>

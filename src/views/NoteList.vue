@@ -26,8 +26,8 @@
             <p
               class="main_list_item_title"
               @click="handleSelected(item)"
-            >item{{ item }}</p>
-            <p class="main_list_item_date">2020-2-2 21:18:35</p>
+            >{{ item.title }}</p>
+            <p class="main_list_item_date">{{ item.gmtModified }}</p>
             <el-popconfirm
               @onConfirm="handleItemDel(item)"
               confirmButtonText='是哒'
@@ -53,6 +53,7 @@
         <el-pagination
           background
           layout="prev, pager, next"
+          :current-page.sync=pagination.page
           :pager-count="5"
           :page-size="pagination.pageSize"
           :total="pagination.total"
@@ -92,6 +93,7 @@
 </template>
 
 <script>
+import { notePageApi, noteAddApi, noteDeleteApi } from "@/utils/api_url_utils.js"; // 导入我们的api接口
 export default {
   data() {
     return {
@@ -100,9 +102,10 @@ export default {
       },
       dialogVisibleAddNote: false,
       pagination: {
-        list: [1, 2, 3],
+        page:1,
+        list: [],
         pageSize: 5,
-        total: 50
+        total: 0
       }
     };
   },
@@ -117,11 +120,25 @@ export default {
     },
     handleSelected(item) {
       console.log("被选中的文章:" + item);
-      this.$router.push({ path: "/noteDetail", query: {id:1} });
+      this.$router.push({ path: `/noteDetail/${item.id}`});
     },
     //删除单个列表数据
     handleItemDel(item) {
       console.log("被删除的文章:" + item);
+      //接口调用时通用的加载遮罩方法
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      this.handleNoteDelete(item.id, ()=>{
+        loading.close();
+        //设置为首页
+        this.pagination.page = 1;
+        this.handleGetNotePage();
+      });
+
     },
     // 翻页事件
     handleSizeChange(val) {
@@ -130,6 +147,7 @@ export default {
 
     handleCurrentChange(val) {
       console.log("currentPage 改变时会触发:" + val);
+      this.handleGetNotePage(val);
     },
 
     handlePrevClick(val) {
@@ -141,23 +159,84 @@ export default {
     },
 
     addNoteMethod(){
-       //接口调用时通用的加载遮罩方法
+      //接口调用时通用的加载遮罩方法
       const loading = this.$loading({
         lock: true,
         text: "Loading",
         spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)"
       });
-      setTimeout(() => {
+      //添加笔记
+      let params = {
+        'title':this.addNote.title
+      }
+      this.handleNoteAdd(params, ()=>{
         loading.close();
         this.dialogVisibleAddNote = false;
-      }, 2000);
+        //设置为首页
+        this.pagination.page = 1;
+        this.handleGetNotePage();
+      });
+    },
+
+    handleGetNotePage(page = 1){
+
+      this.getNotePageData(page, this.pagination.pageSize, (data)=>{
+        console.log("成功回调拿到的数据:" + data);
+        this.pagination.list = data.list;
+        this.pagination.total = data.total;
+      });
+
+    },
+
+    getNotePageData(page, pageSize, handleSuccess){
+      notePageApi(page, pageSize).then(res => {
+        // 获取数据成功后的其他操作
+        // console.log("获取notePageApi接口数据" + JSON.stringify(res));
+        if (res.code == 200) {
+          handleSuccess(res.data);
+          //成功
+        }else{
+          //失败
+        }
+      });
+    },
+
+    handleNoteAdd(params, handleSuccess){
+      noteAddApi(params).then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取noteAddApi接口数据" + JSON.stringify(res));
+        if (res.code == 200) {
+          handleSuccess(res.data);
+          //成功
+        }else{
+          //失败
+        }
+      });
+    },
+
+    handleNoteDelete(id, handleSuccess){
+      noteDeleteApi(id).then(res => {
+        // 获取数据成功后的其他操作
+        console.log("获取noteDeleteApi接口数据" + JSON.stringify(res));
+        if (res.code == 200) {
+          handleSuccess(res.data);
+          //成功
+        }else{
+          //失败
+        }
+      });
     }
+
   },
 
   computed: {},
 
-  components: {}
+  components: {},
+
+  mounted(){
+    this.handleGetNotePage();
+  }
 };
 </script>
 <style lang='css' scoped>
