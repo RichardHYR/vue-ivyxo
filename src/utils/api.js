@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Message} from 'element-ui'
 import { getStore } from "./utils";
 
-// let userInfo = localStorage.getItem("user_info") == null?null:JSON.parse(localStorage.getItem("user_info"));
+axios.defaults.timeout =  1000 * 10 * 1;
 axios.interceptors.request.use(config=> {
   let userInfo = getStore("user_info");
   config.headers.common = {
@@ -21,14 +21,19 @@ axios.interceptors.response.use(data=> {
   }
   return data;
 }, err=> {
-  if (err.response.status == 504||err.response.status == 404) {
-    Message.error({message: '服务器被吃了⊙﹏⊙∥'});
-  } else if (err.response.status == 403) {
-    Message.error({message: '权限不足,请联系管理员!'});
-  }else {
-    Message.error({message: '未知错误!'});
+  try{
+    if (err.response.status == 504||err.response.status == 404) {
+      Message.error({message: '服务器被吃了⊙﹏⊙∥'});
+    } else if (err.response.status == 403) {
+      Message.error({message: '权限不足,请联系管理员!'});
+    }else {
+      Message.error({message: '未知错误!'});
+    }
+    return Promise.resolve(err);
+  }catch{
+    Message.error({message: '未知错误!!'});
+    return Promise.reject(err);
   }
-  return Promise.resolve(err);
 })
 
 
@@ -96,13 +101,13 @@ export const getRequest = (url,params) => {
   return axios({
     method: 'get',
     data:params,
-    transformRequest: [function (data) {
-      let ret = ''
-      for (let it in data) {
-        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-      }
-      return ret
-    }],
+    // transformRequest: [function (data) {
+    //   let ret = ''
+    //   for (let it in data) {
+    //     ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+    //   }
+    //   return ret
+    // }],
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },

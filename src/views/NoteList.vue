@@ -17,7 +17,7 @@
       <p class="title">笔记列表</p>
       <div class="main">
         <div class="main_list">
-
+          <p class="main_list_empty" v-show="pagination.list.length == 0">快去添加你的笔记吧↗</p>
           <div
             class="main_list_item"
             v-for="(item, index) in pagination.list"
@@ -125,15 +125,7 @@ export default {
     //删除单个列表数据
     handleItemDel(item) {
       console.log("被删除的文章:" + item);
-      //接口调用时通用的加载遮罩方法
-      const loading = this.$loading({
-        lock: true,
-        text: "Loading",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-      this.handleNoteDelete(item.id, ()=>{
-        loading.close();
+      this.handleNoteDeleteApi(item.id, (res)=>{
         //设置为首页
         this.pagination.page = 1;
         this.handleGetNotePage();
@@ -159,6 +151,45 @@ export default {
     },
 
     addNoteMethod(){
+      // //接口调用时通用的加载遮罩方法
+      // const loading = this.$loading({
+      //   lock: true,
+      //   text: "Loading",
+      //   spinner: "el-icon-loading",
+      //   background: "rgba(0, 0, 0, 0.7)"
+      // });
+      //添加笔记
+      let params = {
+        'title':this.addNote.title
+      }
+      // this.handleNoteAdd(params, ()=>{
+      //   loading.close();
+      //   this.dialogVisibleAddNote = false;
+      //   //设置为首页
+      //   this.pagination.page = 1;
+      //   this.handleGetNotePage();
+      // });
+
+      this.handleNoteAddApi(params, (res)=>{
+        this.dialogVisibleAddNote = false;
+        //设置为首页
+        this.pagination.page = 1;
+        this.handleGetNotePage();
+      });
+
+    },
+
+    handleGetNotePage(page = 1){
+
+      this.handleNotePageApi(page, this.pagination.pageSize, (res)=>{
+        console.log("成功回调拿到的数据:" + res);
+        this.pagination.list = res.data.list;
+        this.pagination.total = res.data.total;
+      });
+
+    },
+
+    handleNotePageApi(page, pageSize, handleSuccess = ()=>{}, handleFail = ()=>{}){
       //接口调用时通用的加载遮罩方法
       const loading = this.$loading({
         lock: true,
@@ -166,65 +197,86 @@ export default {
         spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)"
       });
-      //添加笔记
-      let params = {
-        'title':this.addNote.title
-      }
-      this.handleNoteAdd(params, ()=>{
-        loading.close();
-        this.dialogVisibleAddNote = false;
-        //设置为首页
-        this.pagination.page = 1;
-        this.handleGetNotePage();
-      });
-    },
-
-    handleGetNotePage(page = 1){
-
-      this.getNotePageData(page, this.pagination.pageSize, (data)=>{
-        console.log("成功回调拿到的数据:" + data);
-        this.pagination.list = data.list;
-        this.pagination.total = data.total;
-      });
-
-    },
-
-    getNotePageData(page, pageSize, handleSuccess){
       notePageApi(page, pageSize).then(res => {
-        // 获取数据成功后的其他操作
-        // console.log("获取notePageApi接口数据" + JSON.stringify(res));
+        loading.close();
         if (res.code == 200) {
-          handleSuccess(res.data);
+          handleSuccess(res);
           //成功
         }else{
           //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
         }
+      }).catch(err => {
+        loading.close();
+        handleFail();
       });
     },
 
-    handleNoteAdd(params, handleSuccess){
+    handleNoteAddApi(params, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      //接口调用时通用的加载遮罩方法
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       noteAddApi(params).then(res => {
+        //关闭加载中
+        loading.close();
         // 获取数据成功后的其他操作
         console.log("获取noteAddApi接口数据" + JSON.stringify(res));
         if (res.code == 200) {
-          handleSuccess(res.data);
+          handleSuccess(res);
           //成功
         }else{
           //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
         }
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
     },
 
-    handleNoteDelete(id, handleSuccess){
+    handleNoteDeleteApi(id, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      //接口调用时通用的加载遮罩方法
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       noteDeleteApi(id).then(res => {
+        //关闭加载中
+        loading.close();
         // 获取数据成功后的其他操作
         console.log("获取noteDeleteApi接口数据" + JSON.stringify(res));
         if (res.code == 200) {
-          handleSuccess(res.data);
+          handleSuccess(res);
           //成功
         }else{
           //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
         }
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
     }
 
@@ -287,9 +339,16 @@ export default {
   margin: 0 auto;
 }
 .main_list {
+  /* overflow: hidden; */
   width: 600px;
   height: 350px;
   margin: 0 auto;
+}
+.main_list_empty{
+  font-size: 30px;
+  text-align: center;
+  /* position: absolute; */
+
 }
 .main_list_item {
   overflow: hidden;

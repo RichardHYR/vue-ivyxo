@@ -45,6 +45,8 @@ export default {
                 return;
             }
 
+        }).catch(err => {
+            
         });
 
     },

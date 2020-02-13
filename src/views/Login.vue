@@ -44,25 +44,48 @@ export default {
     },
 
     login(){
+
       console.log("登录:" + this.account
                   + "..." + this.psw);
-      // 调用api接口，并且提供了两个参数
-      let _this = this;                
-      loginApi(_this.account,_this.psw).then(res => {
+
+      this.handleLoginApi(this.account,this.psw, (res) => {
+        this.$store.dispatch('actionSetUserInfo', res.data);
+        this.$router.push({path:'/',query:{}});
+      });
+                
+    },
+
+    handleLoginApi(account, psw, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      loginApi(account, psw).then(res => {
+        //关闭加载中
+        loading.close();
         // 获取数据成功后的其他操作
-        console.log("获取接口数据" + JSON.stringify(res));
+        console.log("获取loginApi接口数据" + JSON.stringify(res));
         if(res.code == 200){
-          this.$store.dispatch('actionSetUserInfo', res.data);
-          this.$router.push({path:'/',query:{}});
+          //成功
+          handleSuccess(res);
         }else{
+          //失败
           this.$message({
             message: res.msg,
             type: 'warning'
           });
+          handleFail();
         }                   
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
-                
     }
+    
   },
   components: {
 

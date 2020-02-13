@@ -97,12 +97,13 @@ export default {
         "summaryContent":this.summary,
         "mainContent":this.main
       }
-      this.handleNoteUpdate(noteId, params, ()=>{
+      this.handleNoteUpdateApi(noteId, params, ()=>{
         this.$message({
           message: '更新成功',
           type: 'success'
         });
       });
+
     },
 
     handleSendMsg(val) {
@@ -141,12 +142,20 @@ export default {
       }
     },
 
-    handleNoteGet(id, handleSuccess){
+    handleNoteGetApi(id, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       noteGetApi(id).then(res => {
+        //关闭加载中
+        loading.close();
         // 获取数据成功后的其他操作
         console.log("获取noteGetApi接口数据" + JSON.stringify(res));
         if (res.code == 200) {
-          handleSuccess(res.data);
+          handleSuccess(res);
           //成功
         }else{
           //失败
@@ -154,16 +163,30 @@ export default {
             message: res.msg,
             type: 'warning'
           });
+          handleFail();
         }
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
     },
 
-    handleNoteUpdate(id, params, handleSuccess){
+    handleNoteUpdateApi(id, params, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       noteUpdateApi(id, params).then(res => {
+        //关闭加载中
+        loading.close();
         // 获取数据成功后的其他操作
         console.log("获取noteGetApi接口数据" + JSON.stringify(res));
         if (res.code == 200) {
-          handleSuccess(res.data);
+          handleSuccess(res);
           //成功
         }else{
           //失败
@@ -171,8 +194,15 @@ export default {
             message: res.msg,
             type: 'warning'
           });
+          handleFail();
         }
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
+
     },
 
 
@@ -184,12 +214,12 @@ export default {
     let noteId = this.$route.params.noteId;
     console.log('noteId类型判断:' + isNaN(noteId));
     if(!isNaN(noteId)){
-      this.handleNoteGet(noteId, (data)=>{
-        this.time = data.gmtModified;
-        this.title = data.title;
-        this.keyword = data.keywordContent;
-        this.main = data.mainContent;
-        this.summary = data.summaryContent;
+      this.handleNoteGetApi(noteId, (res)=>{
+        this.time = res.data.gmtModified;
+        this.title = res.data.title;
+        this.keyword = res.data.keywordContent;
+        this.main = res.data.mainContent;
+        this.summary = res.data.summaryContent;
         this.$refs.editor.setContent(this.keyword);
       });
     }else{

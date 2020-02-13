@@ -10,7 +10,7 @@
       </div>
       <div
         class="setting_btn"
-        @click="$router.push({ path: '/setting', query: {} })"
+        @click="handleSetting"
       >
         <i class="el-icon-setting"></i>
       </div>
@@ -40,23 +40,62 @@ export default {
   },
 
   methods: {
+
+    handleSetting(){
+      console.log("点击了设置");
+      //失败
+      this.$message({
+        message: '尚未开放',
+        type: 'info'
+      });
+      // this.$router.push({ path: '/setting', query: {} });
+    },
+
     handleLoginOut(){
       console.log("点击了退出登录");
+      this.handleLoginOutApi((res)=>{
+        this.$store.dispatch('actionLoginOut');
+        this.$router.push({ path: '/', query: {} });
+      });
+    },
+
+    handleLoginOutApi(handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       loginOutApi().then(res => {
+        //关闭加载中
+        loading.close();
         // 获取数据成功后的其他操作
         if (res.code == 200) {
-          this.$store.dispatch('actionLoginOut');
-          this.$router.push({ path: '/', query: {} });
+          handleSuccess(res);
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
         }
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
     }
+
+
   },
 
   components: {},
 
   computed: {
     isShow(){
-      console.log("执行方法:" + getStore('user_info'));
+      // console.log("执行方法:" + getStore('user_info'));
       if(this.$store.state.isLogin){
         let userInfo = getStore('user_info');
         if(isNotNullORBlank(userInfo)){

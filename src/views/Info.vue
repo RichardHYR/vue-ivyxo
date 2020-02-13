@@ -39,24 +39,46 @@ export default {
     },
 
     settingInfo(data) {
-      this.list = data;
+      this.handleInfoApi(res=>{
+        this.list = res.data;
+      });
     },
 
-    getInfo() {
-      // 调用api接口，并且提供了两个参数
-      // let _this = this;
-      infoApi().then(res => {
-        // 获取数据成功后的其他操作
-        console.log("获取info接口数据" + JSON.stringify(res));
-        if (res.code == 200) {
-          this.settingInfo(res.data);
-        }
+    handleInfoApi(handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
       });
-    }
+      infoApi().then(res => {
+        //关闭加载中
+        loading.close();
+        // 获取数据成功后的其他操作
+        console.log("获取infoApi接口数据" + JSON.stringify(res));
+        if (res.code == 200) {
+          handleSuccess(res);
+          //成功
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
+        }
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
+      });
+    },
+
   },
   components: {},
   mounted() {
-    this.getInfo();
+    this.settingInfo();
   }
 };
 </script>

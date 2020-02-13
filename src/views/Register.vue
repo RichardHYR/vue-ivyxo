@@ -65,21 +65,47 @@ export default {
         "name" : _this.name,
         "psw1" : _this.psw1,
         "psw2" : _this.psw2
-      };                
+      };
+      
+      this.handleRegisterApi(params, (res)=>{
+        sessionStorage.setItem("user_account",res.data.account);
+        this.$router.push({path:'/login',query:{}});
+      });
+
+    },
+
+    handleRegisterApi(params, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       registerApi(params).then(res => {
-          // 获取数据成功后的其他操作
-          console.log("获取接口数据" + JSON.stringify(res));
-          if(res.code == 200){
-            sessionStorage.setItem("user_account",res.data.account);
-            this.$router.push({path:'/login',query:{}});
-          }else{
-            this.$message({
-              message: res.msg,
-              type: 'warning'
-            });
-          }                     
+        //关闭加载中
+        loading.close();
+        // 获取数据成功后的其他操作
+        console.log("获取registerApi接口数据" + JSON.stringify(res));
+        if(res.code == 200){
+          //成功
+          handleSuccess(res);
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
+        }                   
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
       });
     }
+
+
   },
   components: {
 
