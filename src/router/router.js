@@ -4,7 +4,7 @@ const index = r => require.ensure([], () => r(require('../views/Index')), 'index
 const register = r => require.ensure([], () => r(require('../views/Register')), 'register')
 const login = r => require.ensure([], () => r(require('../views/Login')), 'login')
 const info = r => require.ensure([], () => r(require('../views/Info')), 'info')
-const setting = r => require.ensure([], () => r(require('../views/Setting')), 'setting')
+const setting = r => require.ensure([], () => r(require('../views/Setting/Setting')), 'setting')
 const note = r => require.ensure([], () => r(require('../views/NoteInfo')), 'noteInfo')
 const noteList = r => require.ensure([], () => r(require('../views/NoteList')), 'noteList')
 const noteList2 = r => require.ensure([], () => r(require('../views/NoteList2')), 'noteList2')

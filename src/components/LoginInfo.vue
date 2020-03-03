@@ -43,12 +43,12 @@ export default {
 
     handleSetting(){
       console.log("点击了设置");
-      //失败
-      this.$message({
-        message: '尚未开放',
-        type: 'info'
-      });
-      // this.$router.push({ path: '/setting', query: {} });
+      // //失败
+      // this.$message({
+      //   message: '尚未开放',
+      //   type: 'info'
+      // });
+      this.$router.push({ path: '/setting', query: {} });
     },
 
     handleLoginOut(){
