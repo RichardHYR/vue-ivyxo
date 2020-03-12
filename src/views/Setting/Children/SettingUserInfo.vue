@@ -41,7 +41,7 @@
       <p
         v-if="!edit"
         class="info_item_value"
-      >{{ birthday }}</p>
+      >{{ birthday == null?"未设置":birthday }}</p>
       <el-date-picker
         v-if="edit"
         style="margin-left:10px;"
@@ -80,13 +80,16 @@
 </template>
 
 <script>
+import { isNotNullORBlank, setStore, getStore, removeStore } from "@/utils/utils.js";
+import { userUpdateApi, userSettingInfoApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
 export default {
   name: "SettingUserInfo",
   data() {
     return {
+      "viewData":null,
       "edit":false,
-      "account":"dhfjahdfj",
-      "name":"djdjjd",
+      "account":"defaultAccount",
+      "name":"defaultName",
       "sex":0,
       "birthday":"2020-01-09"
     };
@@ -95,24 +98,120 @@ export default {
   methods: {
     editBtn(){
       this.edit = true;
-      console.log("点击了编辑按钮");
     },
 
     cancelBtn(){
       this.edit = false;
-      console.log("点击了取消按钮");
+      if(isNotNullORBlank(this.viewData)){
+        this.name = this.viewData.name;
+        this.sex = this.viewData.sex;
+        this.birthday = this.viewData.birthday;
+      }
     },
 
     confirmBtn(){
       this.edit = false;
-      console.log("点击了确定按钮");
+      let params = {
+        'name': this.name,
+        'sex': this.sex,
+        'birthday': this.birthday
+      }
+      console.log("更新的数据:" + JSON.stringify(params));
+      this.handleUserUpdateApi(params, (res)=>{
+        // 执行更新操作
+        this.settingUserInfo();
+      });
+      
+    },
+
+    settingUserInfo(){
+      this.handleUserSettingInfoApi((res)=>{
+        this.viewData = res.data;
+        this.account = res.data.account;
+        this.name = res.data.name;
+        this.sex = res.data.sex;
+        this.birthday = res.data.birthday;
+        //重设用户信息
+        let userInfo = getStore('user_info');
+        userInfo = JSON.parse(userInfo);
+        userInfo.name = res.data.name;
+        userInfo.sex = res.data.sex;
+        userInfo.birthday = res.data.birthday;
+        this.$store.dispatch('actionSetUserInfo', userInfo);
+      });
+    },
+
+    handleUserUpdateApi(params, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      userUpdateApi(params).then(res => {
+        //关闭加载中
+        loading.close();
+        // 获取数据成功后的其他操作
+        console.log("获取userUpdateApi接口数据" + JSON.stringify(res));
+        if(res.code == 200){
+          //成功
+          handleSuccess(res);
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
+        }                   
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
+      });
+    },
+
+    handleUserSettingInfoApi(handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      userSettingInfoApi().then(res => {
+        //关闭加载中
+        loading.close();
+        // 获取数据成功后的其他操作
+        console.log("获取userSettingInfoApi接口数据" + JSON.stringify(res));
+        if(res.code == 200){
+          //成功
+          handleSuccess(res);
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
+        }                   
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
+      });
     }
 
   },
 
   computed: {},
 
-  components: {}
+  components: {},
+
+  mounted(){
+    this.settingUserInfo();
+  }
 };
 </script>
 <style lang='css' scoped>

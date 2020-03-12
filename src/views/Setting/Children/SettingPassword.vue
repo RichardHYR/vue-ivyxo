@@ -8,6 +8,7 @@
       <el-input
         style="margin-left:10px; width: 300px;"
         v-model="oldPsw"
+        show-password
         placeholder="请输入旧密码"
       ></el-input>
     </div>
@@ -20,6 +21,7 @@
       <el-input
         style="margin-left:10px; width: 300px;"
         v-model="newPsw"
+        show-password
         placeholder="请输入新密码"
       ></el-input>
     </div>
@@ -32,6 +34,7 @@
       <el-input
         style="margin-left:10px; width: 300px;"
         v-model="confirmPsw"
+        show-password
         placeholder="请再次确认密码"
       ></el-input>
     </div>
@@ -47,20 +50,67 @@
 </template>
 
 <script>
+import { isNotNullORBlank, setStore, getStore, removeStore } from "@/utils/utils.js";
+import { userUpdatePasswordApi } from '@/utils/api_url_utils.js';// 导入我们的api接口
 export default {
   name: "SettingPassword",
   data() {
     return {
-        "oldPsw":"",
+      "oldPsw":"",
       "newPsw":"",
       "confirmPsw":""
     };
   },
 
   methods: {
+
     updatePswBtn(){
       console.log("点击了更新密码按钮");
+      let params = {
+        "oldPsw":this.oldPsw,
+        "newPsw":this.newPsw,
+        "confirmPsw":this.confirmPsw
+      }
+      this.handleUserUpdatePasswordApi(params, (res)=>{
+        console.log("更新密码成功");
+        //设置为退出登录状态
+        this.$store.dispatch('actionLoginOut');
+        this.$router.push({ path: '/login', query: {} });
+      });
+
     },
+
+    handleUserUpdatePasswordApi(params, handleSuccess = ()=>{}, handleFail = ()=>{}){
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      userUpdatePasswordApi(params).then(res => {
+        //关闭加载中
+        loading.close();
+        // 获取数据成功后的其他操作
+        console.log("获取userUpdatePasswordApi接口数据" + JSON.stringify(res));
+        if(res.code == 200){
+          //成功
+          handleSuccess(res);
+        }else{
+          //失败
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          });
+          handleFail();
+        }                   
+      }).catch(err => {
+        //关闭加载中
+        loading.close();
+        //失败
+        handleFail();
+      });
+    },
+
   },
 
   computed: {},
