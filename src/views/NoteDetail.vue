@@ -49,17 +49,20 @@
         <div class="box_center">
           <div
             class="box_center_left"
+            :style="changeSelect == 1?{'background-color':'rgb(255, 255, 255)'}:{}"
             v-html="keyword"
             @click="handleContent(1)"
           ></div>
           <div
             class="box_center_right"
+            :style="changeSelect == 2?{'background-color':'rgb(255, 255, 255)'}:{}"
             v-html="main"
             @click="handleContent(2)"
           ></div>
         </div>
         <div
           class="box_footer"
+          :style="changeSelect == 3?{'background-color':'rgb(255, 255, 255)'}:{}"
           v-html="summary"
           @click="handleContent(3)"
         ></div>
@@ -126,6 +129,7 @@ export default {
 
     handleContent(val){
       this.changeSelect = val;
+      console.log('选中的框:' + this.changeSelect);
       switch (val) {
         case 1:
           this.$refs.editor.setContent(this.keyword);
