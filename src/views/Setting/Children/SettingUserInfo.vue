@@ -54,6 +54,34 @@
       </el-date-picker>
     </div>
 
+    <div class="info_item">
+      <p class="info_item_title">邮箱:</p>
+      <p
+        v-if="!edit"
+        class="info_item_value"
+      >{{ email != ""?email:"未设置" }}</p>
+      <el-input
+        v-if="edit"
+        style="margin-left:10px; width: 200px;"
+        v-model="email"
+        placeholder="请输入邮箱"
+      ></el-input>
+    </div>
+
+    <div class="info_item">
+      <p class="info_item_title">微信账号:</p>
+      <p
+        v-if="!edit"
+        class="info_item_value"
+      >{{ wechatAccount != ""?wechatAccount:"未设置" }}</p>
+      <el-input
+        v-if="edit"
+        style="margin-left:10px; width: 200px;"
+        v-model="wechatAccount"
+        placeholder="请输入微信账号"
+      ></el-input>
+    </div>
+
     <el-button
       @click="editBtn"
       class="editBtn"
@@ -91,7 +119,9 @@ export default {
       "account":"defaultAccount",
       "name":"defaultName",
       "sex":0,
-      "birthday":"2020-01-09"
+      "birthday":"2020-01-09",
+      "email":"defaultEmail",
+      "wechatAccount":"defaultWechatAccount"
     };
   },
 
@@ -106,6 +136,8 @@ export default {
         this.name = this.viewData.name;
         this.sex = this.viewData.sex;
         this.birthday = this.viewData.birthday;
+        this.email = this.viewData.email;
+        this.wechatAccount = this.viewData.wechatAccount;
       }
     },
 
@@ -114,7 +146,9 @@ export default {
       let params = {
         'name': this.name,
         'sex': this.sex,
-        'birthday': this.birthday
+        'birthday': this.birthday,
+        "email":this.email,
+	      "wechatAccount":this.wechatAccount
       }
       console.log("更新的数据:" + JSON.stringify(params));
       this.handleUserUpdateApi(params, (res)=>{
@@ -131,12 +165,16 @@ export default {
         this.name = res.data.name;
         this.sex = res.data.sex;
         this.birthday = res.data.birthday;
+        this.email = res.data.email;
+        this.wechatAccount = res.data.wechatAccount;
         //重设用户信息
         let userInfo = getStore('user_info');
         userInfo = JSON.parse(userInfo);
         userInfo.name = res.data.name;
         userInfo.sex = res.data.sex;
         userInfo.birthday = res.data.birthday;
+        userInfo.email = res.data.email;
+        userInfo.wechatAccount = res.data.wechatAccount;
         this.$store.dispatch('actionSetUserInfo', userInfo);
       });
     },

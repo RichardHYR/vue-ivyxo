@@ -6,7 +6,7 @@
       </div>
       <p class="title">设置</p>
 
-      <el-tabs tab-position="left" style="width: 600px;height: 300px;margin: 0 auto;margin-top: 80px;">
+      <el-tabs tab-position="left" style="width: 600px;height: 380px;margin: 0 auto;margin-top: 30px;">
         
         <!-- 基本信息 -->
         <el-tab-pane>
